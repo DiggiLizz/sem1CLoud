@@ -1,0 +1,12 @@
+/Users/user_1/EjemploMicroservicio1/src/main/java/cl/duoc/ejemplo/microservicio/MicroservicioApplication.java
+/Users/user_1/EjemploMicroservicio1/src/main/java/cl/duoc/ejemplo/microservicio/controllers/EventosController.java
+/Users/user_1/EjemploMicroservicio1/src/main/java/cl/duoc/ejemplo/microservicio/controllers/MicroservicioController.java
+/Users/user_1/EjemploMicroservicio1/src/main/java/cl/duoc/ejemplo/microservicio/dto/ActualizarEventoRequest.java
+/Users/user_1/EjemploMicroservicio1/src/main/java/cl/duoc/ejemplo/microservicio/dto/CompraResponse.java
+/Users/user_1/EjemploMicroservicio1/src/main/java/cl/duoc/ejemplo/microservicio/dto/NuevaCompraRequest.java
+/Users/user_1/EjemploMicroservicio1/src/main/java/cl/duoc/ejemplo/microservicio/dto/NuevoEventoRequest.java
+/Users/user_1/EjemploMicroservicio1/src/main/java/cl/duoc/ejemplo/microservicio/model/Compra.java
+/Users/user_1/EjemploMicroservicio1/src/main/java/cl/duoc/ejemplo/microservicio/model/Evento.java
+/Users/user_1/EjemploMicroservicio1/src/main/java/cl/duoc/ejemplo/microservicio/repo/CompraRepository.java
+/Users/user_1/EjemploMicroservicio1/src/main/java/cl/duoc/ejemplo/microservicio/repo/EventoRepository.java
+/Users/user_1/EjemploMicroservicio1/src/main/java/cl/duoc/ejemplo/microservicio/service/TiendaService.java
