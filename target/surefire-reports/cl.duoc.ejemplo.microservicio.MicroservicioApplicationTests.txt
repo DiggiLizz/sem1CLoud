@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: cl.duoc.ejemplo.microservicio.MicroservicioApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.821 s -- in cl.duoc.ejemplo.microservicio.MicroservicioApplicationTests
