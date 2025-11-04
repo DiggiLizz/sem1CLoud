@@ -109,14 +109,21 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      # =======================================
-      # 🖥️ Paso 9: Desplegar en la instancia EC2
+            # =======================================
+      # 🖥️ Paso 9: Desplegar en la instancia EC2 (FIX S3_BUCKET)
       # =======================================
       - name: SSH commands to deploy on EC2
         shell: bash
+        env:
+          S3_BUCKET: ${{ env.S3_BUCKET }}
+          AWS_REGION: ${{ env.AWS_REGION }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           echo "🚀 Conectando a EC2 y desplegando..."
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ secrets.USER_SERVER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            ${{ secrets.USER_SERVER }}@${{ secrets.EC2_HOST }} \
+            "S3_BUCKET=${S3_BUCKET} AWS_REGION=${AWS_REGION} DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME} DOCKERHUB_TOKEN=${DOCKERHUB_TOKEN} bash -s" << 'EOF'
             set -euo pipefail
 
             echo "📦 Verificando AWS CLI en EC2..."
@@ -130,21 +137,20 @@ jobs:
             docker rm my-app || true
 
             echo "📥 Iniciando sesión en DockerHub..."
-            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+            echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
 
             echo "⬇️ Descargando imagen más reciente..."
-            docker pull "${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest"
+            docker pull "${DOCKERHUB_USERNAME}/my-app:latest"
 
             echo "🔐 (Opcional) Descargando configuración desde S3 si existe..."
             mkdir -p /home/${USER}/deploy
             aws s3 cp "s3://${S3_BUCKET}/config/.env" "/home/${USER}/deploy/.env" || true
 
             echo "🔥 Iniciando nuevo contenedor..."
-            # Usa --env-file si se descargó .env
             if [ -f "/home/${USER}/deploy/.env" ]; then
-              docker run -d --name my-app --env-file /home/${USER}/deploy/.env -p 8080:8080 --restart unless-stopped "${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest"
+              docker run -d --name my-app --env-file /home/${USER}/deploy/.env -p 8080:8080 --restart unless-stopped "${DOCKERHUB_USERNAME}/my-app:latest"
             else
-              docker run -d --name my-app -p 8080:8080 --restart unless-stopped "${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest"
+              docker run -d --name my-app -p 8080:8080 --restart unless-stopped "${DOCKERHUB_USERNAME}/my-app:latest"
             fi
 
             echo "🧽 Limpiando imágenes antiguas..."
@@ -152,11 +158,3 @@ jobs:
 
             echo "✅ Despliegue finalizado."
           EOF
-
-      # ==========================================
-      # 🌐 Paso 10: Mostrar URL pública de despliegue
-      # ==========================================
-      - name: Mostrar URL de despliegue
-        run: |
-          echo "✅ Despliegue exitoso en EC2"
-          echo "🌍 URL pública: http://${{ secrets.EC2_HOST }}:8080"
