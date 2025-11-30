@@ -18,13 +18,13 @@ jobs:
 
     steps:
       # ==============================
-      # 🧩 Paso 1: Checkout del código
+      # Paso 1: Checkout del código
       # ==============================
       - name: Checkout repository
         uses: actions/checkout@v3
 
       # =========================================
-      # ☕ (Opcional) Build backend / frontend aquí
+      # (Opcional) Build backend / frontend aquí
       # =========================================
       # - name: Build proyecto
       #   run: |
@@ -32,7 +32,7 @@ jobs:
       #     # ó npm ci && npm run build (si corresponde)
 
       # =====================================
-      # 🔐 Paso 2: Autenticar en DockerHub
+      # Paso 2: Autenticar en DockerHub
       # =====================================
       - name: Log in to DockerHub
         uses: docker/login-action@v2
@@ -41,23 +41,23 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # =====================================
-      # 🏗️ Paso 3: Construir la imagen Docker
+      # Paso 3: Construir la imagen Docker
       # =====================================
       - name: Build Docker Image
         run: |
-          echo "🔨 Construyendo imagen Docker..."
+          echo "Construyendo imagen Docker..."
           docker build -t "${DOCKER_IMAGE}" .
 
       # ======================================
-      # 🚀 Paso 4: Subir la imagen a DockerHub
+      # Paso 4: Subir la imagen a DockerHub
       # ======================================
       - name: Push Docker Image
         run: |
-          echo "📦 Subiendo imagen a DockerHub..."
+          echo " Subiendo imagen a DockerHub..."
           docker push "${DOCKER_IMAGE}"
 
       # ==========================================================
-      # 🌎 Paso 5: Configurar credenciales de AWS para usar S3/EC2
+      # Paso 5: Configurar credenciales de AWS para usar S3/EC2
       # ==========================================================
       - name: Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -68,7 +68,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       # ===================================================================
-      # 📤 Paso 6: Publicar estáticos al bucket S3 (si existe ./dist o ./build)
+      # Paso 6: Publicar estáticos al bucket S3 (si existe ./dist o ./build)
       # ===================================================================
       - name: Sync static assets to S3
         run: |
@@ -84,7 +84,7 @@ jobs:
           fi
 
       # ========================================================================
-      # 🗂️ Paso 7: Respaldar artefactos del build en S3 para trazabilidad (tgz)
+      #  Paso 7: Respaldar artefactos del build en S3 para trazabilidad (tgz)
       # ========================================================================
       - name: Package build artifacts
         run: |
@@ -100,17 +100,17 @@ jobs:
           aws s3 cp "build-${{ github.sha }}.tgz" "s3://${S3_BUCKET}/builds/build-${{ github.sha }}.tgz"
 
       # =======================================
-      # 🔑 Paso 8: Configurar llave SSH de EC2
+      #  Paso 8: Configurar llave SSH de EC2
       # =======================================
       - name: Add SSH Key
         run: |
-          echo "🔑 Configurando clave SSH..."
+          echo " Configurando clave SSH..."
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
             # =======================================
-      # 🖥️ Paso 9: Desplegar en la instancia EC2 (FIX S3_BUCKET)
+      # Paso 9: Desplegar en la instancia EC2 (FIX S3_BUCKET)
       # =======================================
       - name: SSH commands to deploy on EC2
         shell: bash
@@ -120,41 +120,41 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          echo "🚀 Conectando a EC2 y desplegando..."
+          echo " Conectando a EC2 y desplegando..."
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             ${{ secrets.USER_SERVER }}@${{ secrets.EC2_HOST }} \
             "S3_BUCKET=${S3_BUCKET} AWS_REGION=${AWS_REGION} DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME} DOCKERHUB_TOKEN=${DOCKERHUB_TOKEN} bash -s" << 'EOF'
             set -euo pipefail
 
-            echo "📦 Verificando AWS CLI en EC2..."
+            echo " Verificando AWS CLI en EC2..."
             if ! command -v aws >/dev/null 2>&1; then
-              echo "➡️ Instalando AWS CLI (Amazon Linux/RHEL-based)..."
+              echo "Instalando AWS CLI (Amazon Linux/RHEL-based)..."
               sudo yum -y install awscli || true
             fi
 
-            echo "🧹 Deteniendo contenedores antiguos..."
+            echo " Deteniendo contenedores antiguos..."
             docker stop my-app || true
             docker rm my-app || true
 
-            echo "📥 Iniciando sesión en DockerHub..."
+            echo " Iniciando sesión en DockerHub..."
             echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
 
-            echo "⬇️ Descargando imagen más reciente..."
+            echo "Descargando imagen más reciente..."
             docker pull "${DOCKERHUB_USERNAME}/my-app:latest"
 
-            echo "🔐 (Opcional) Descargando configuración desde S3 si existe..."
+            echo "(Opcional) Descargando configuración desde S3 si existe..."
             mkdir -p /home/${USER}/deploy
             aws s3 cp "s3://${S3_BUCKET}/config/.env" "/home/${USER}/deploy/.env" || true
 
-            echo "🔥 Iniciando nuevo contenedor..."
+            echo " Iniciando nuevo contenedor..."
             if [ -f "/home/${USER}/deploy/.env" ]; then
               docker run -d --name my-app --env-file /home/${USER}/deploy/.env -p 8080:8080 --restart unless-stopped "${DOCKERHUB_USERNAME}/my-app:latest"
             else
               docker run -d --name my-app -p 8080:8080 --restart unless-stopped "${DOCKERHUB_USERNAME}/my-app:latest"
             fi
 
-            echo "🧽 Limpiando imágenes antiguas..."
+            echo " Limpiando imágenes antiguas..."
             docker image prune -f
 
-            echo "✅ Despliegue finalizado."
+            echo " Despliegue finalizado."
           EOF
