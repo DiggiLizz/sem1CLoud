@@ -23,7 +23,7 @@ security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://login.microsoftonline.com/9ccce496-e4fd-4f14-89ff-3b4f76e558a5/v2.0/ // se saca de la ruta de microservicios
+          issuer-uri: https://login.microsoftonline.com/9ccce496-e4fd-4f14-89ff-3b4f76e558a5/v2.0/ 
 
 logging:
   level:
