@@ -64,3 +64,6 @@ curl --location --request DELETE 'http://localhost:8080/microservicio' \
 - Todos los endpoints responden con datos estáticos (hardcoded).
 - Este microservicio no realiza operaciones reales sobre bases de datos o sistemas externos.
 - Ideal para probar pipelines de integración y despliegue.
+
+# Mi proyecto
+(Actualizado el 30-11-2025 para probar GitHub Actions)
