@@ -14,16 +14,14 @@ import org.springframework.security.oauth2.jwt.JwtDecoders;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Tomamos el issuer que ya tienes configurado en application.properties
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private String issuerUri;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
             .cors(Customizer.withDefaults())
-            .authorizeHttpRequests(authorize -> authorize
+            .authorizeHttpRequests(auth -> auth
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
@@ -33,10 +31,8 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Bean necesario para que Spring Security pueda validar el JWT
     @Bean
     public JwtDecoder jwtDecoder() {
-        // Crea el decoder a partir del issuer (Azure AD en tu caso)
         return JwtDecoders.fromIssuerLocation(issuerUri);
     }
 }
