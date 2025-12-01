@@ -66,4 +66,4 @@ curl --location --request DELETE 'http://localhost:8080/microservicio' \
 - Ideal para probar pipelines de integración y despliegue.
 
 # Mi proyecto
-(Actualizado el 30-11-2025 para probar GitHub Actions)
+(Actualizado el 30-11-2025 para probar GitHub Actions lizz)
