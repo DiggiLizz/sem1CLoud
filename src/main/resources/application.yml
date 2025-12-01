@@ -15,7 +15,6 @@ spring:
       hibernate:
         format_sql: true
 
-  # Consola H2 para revisar tablas/datos
   h2:
     console:
       enabled: true
@@ -25,7 +24,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "https://login.microsoftonline.com/9ccce496-e4fd-4f14-89ff-3b4f76e558a5/v2.0"
+          issuer-uri: https://login.microsoftonline.com/9ccce496-e4fd-4f14-89ff-3b4f76e558a5/v2.0/
+          
 
 logging:
   level:
