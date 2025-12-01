@@ -62,7 +62,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- 🔐 Seguridad Spring (agregadas) -->
+    <!-- Seguridad Spring (agregadas) -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
