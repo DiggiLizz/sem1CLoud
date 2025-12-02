@@ -37,4 +37,4 @@ public class RolesClaimConverter implements Converter<Jwt, Collection<GrantedAut
 
         return List.of(new SimpleGrantedAuthority("ROLE_" + role));
     }
-
+}
