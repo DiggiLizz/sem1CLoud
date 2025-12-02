@@ -41,7 +41,7 @@ public class SecurityConfig {
     JwtDecoder jwtDecoder() {
 
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withJwkSetUri(
-            "https://duocentnab2ctest.b2clogin.com/duocentnab2ctest.onmicrosoft.com/discovery/v2.0/keys?p=B2C_1_cdy2204_flujo1"
+            "https://cloudramo.b2clogin.com/cloudramo.onmicrosoft.com/discovery/v2.0/keys?p=B2C_1_cloudFlujo"
         ).build();
 
         jwtDecoder.setJwtValidator(token -> {
